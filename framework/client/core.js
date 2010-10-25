@@ -21,6 +21,7 @@ rev.core.UIComponent = Base.extend({
         this._top = null;
         this._bottom = null;
         this._right = null;
+        this._calculatedLayout = null;
         this.createChildren();
     },
     // Display List Functions
@@ -74,11 +75,9 @@ rev.core.UIComponent = Base.extend({
         this._timers["displayList"] = null;
         this.parent().layoutChild(this);
     },
-    updateDisplayList : function(left, top, width, height){
-        console.log('update displayList');
+    updateDisplayList : function(x, y, width, height){
         var update = {'top' : y, 'left' : x, 'width' : width, 'height' : height};
-        console.log(update);
-        console.log(this);
+        this._calculatedLayout = update;
         this._el.css(update);
     },
     // event handling
@@ -129,6 +128,9 @@ rev.core.UIComponent = Base.extend({
     //properties
     left : function(value){
         if(arguments.length==0){
+            if(this._calculatedLayout != null && this._left == null){
+                return this._calculatedLayout.x;
+            }
             return this._left;
         }
         this._left = value;
@@ -136,6 +138,9 @@ rev.core.UIComponent = Base.extend({
     },
     top : function(value){
         if(arguments.length==0){
+            if(this._calculatedLayout != null && this._top == null){
+                return this._calculatedLayout.y;
+            }
             return this._top;
         }
         this._top = value;
@@ -157,8 +162,8 @@ rev.core.UIComponent = Base.extend({
     },
     width : function(value){
         if(arguments.length==0){
-            if(this._width == null){
-                return this._el.width();
+            if(this._calculatedLayout != null && this._width == null){
+                return this._calculatedLayout.w;
             }
             return this._width;
         }
@@ -167,8 +172,8 @@ rev.core.UIComponent = Base.extend({
     },
     height : function(value){
         if(arguments.length==0){
-            if(this._height == null){
-                return this._el.height();
+            if(this._calculatedLayout != null && this._height == null){
+                return this._calculatedLayout.h;
             }
             return this._height;
         }

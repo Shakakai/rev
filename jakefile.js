@@ -2,6 +2,8 @@ var fs = require("file");
 var task = require("jake").task;
 var less = require("less");
 
+var FRAMEWORK_FILES = ('jquery.js base.js core.js utils.js controls.js containers.js controllers.js').split(' ');
+
 function framework_less(){
     var output = '',
           files = ('base.less layout.less theme.less').split(' ');
@@ -13,7 +15,7 @@ function framework_less(){
 
 function framework_source(){
     var output = '',
-          files = ('jquery.js base.js core.js utils.js controls.js containers.js controllers.js').split(' ');
+          files = FRAMEWORK_FILES;
     files.map(function(file) {
         output += fs.read('framework/client/' + file);
     });
@@ -43,10 +45,35 @@ function copy_file(from, to){
     fs.write(to, content);
 }
 
-task("debug-build", ['clean','debug-framework-build','debug-application-build'], function(){});
+task("debug-build", ['clean','debug-framework-build','debug-application-build'], function(){
+    var files = fs.listPaths(fs.join('build', 'debug', 'js'));
+    var js_output = "";
+    files.map(function(file){
+        js_output += "<script type='text/javascript' src='js/"+file+"'></script>";
+    });
+    
+    var css_output = "<link rel='stylesheet' type='text/css' href='debug-framework.css' />"
+    //generate html file
+    var html = "<html><head><title>Debug Build</title>"+css_output+js_output+"</head><body></body></html>";
+    fs.write(fs.join('build', 'debug', 'index.html'), html);
+});
 
 task("debug-framework-build", [], function(){
     //js
+    var files = FRAMEWORK_FILES;
+    files.map(function(file) {
+        var output = fs.read(fs.join('framework', 'client', file));
+        fs.write(fs.join('build', 'debug', 'js', file), output);
+    });
+    
+    //css
+    var less_src = framework_less();
+    var css = less.compileString(less_src);
+    var css_file = fs.join('build', 'debug', 'debug-framework.css');
+    fs.write(css_file, css);
+});
+
+task("release-framework-build", [], function(){
     var fm_src = framework_source();
     var end_file = fs.join('build', 'debug-framework.js');
     fs.write(end_file, fm_src);
@@ -54,13 +81,13 @@ task("debug-framework-build", [], function(){
     //css
     var less_src = framework_less();
     var css = less.compileString(less_src);
-    var css_file = fs.join('build', 'debug-framework.css');
+    var css_file = fs.join('build', 'debug', 'debug-framework.css');
     fs.write(css_file, css);
 });
 
 task("debug-application-build", [], function(){
-    copy_file(fs.join('lib', 'index.html'), fs.join('build', 'index.html'));
-    copy_file(fs.join('lib', 'app.js'), fs.join('build', 'app.js'));
+    // copy_file(fs.join('lib', 'index.html'), fs.join('build', 'index.html'));
+    copy_file(fs.join('lib', 'app.js'), fs.join('build', 'debug', 'js', 'app.js'));
 });
 
 task("clean", [], function(){
