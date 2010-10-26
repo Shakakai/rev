@@ -128,9 +128,6 @@ rev.core.UIComponent = Base.extend({
     //properties
     left : function(value){
         if(arguments.length==0){
-            if(this._calculatedLayout != null && this._left == null){
-                return this._calculatedLayout.x;
-            }
             return this._left;
         }
         this._left = value;
@@ -138,9 +135,6 @@ rev.core.UIComponent = Base.extend({
     },
     top : function(value){
         if(arguments.length==0){
-            if(this._calculatedLayout != null && this._top == null){
-                return this._calculatedLayout.y;
-            }
             return this._top;
         }
         this._top = value;
@@ -162,9 +156,6 @@ rev.core.UIComponent = Base.extend({
     },
     width : function(value){
         if(arguments.length==0){
-            if(this._calculatedLayout != null && this._width == null){
-                return this._calculatedLayout.w;
-            }
             return this._width;
         }
         this._width = value;
@@ -172,9 +163,6 @@ rev.core.UIComponent = Base.extend({
     },
     height : function(value){
         if(arguments.length==0){
-            if(this._calculatedLayout != null && this._height == null){
-                return this._calculatedLayout.h;
-            }
             return this._height;
         }
         this._height = value;

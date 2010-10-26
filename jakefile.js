@@ -4,6 +4,8 @@ var less = require("less");
 
 var FRAMEWORK_FILES = ('jquery.js base.js core.js utils.js controls.js containers.js controllers.js').split(' ');
 
+var APP_FILES = ['app.js'];
+
 function framework_less(){
     var output = '',
           files = ('base.less layout.less theme.less').split(' ');
@@ -25,15 +27,11 @@ function framework_source(){
 function force_delete_folder(file){
     var paths = fs.listPaths(file);
     var len = paths.length;
-    print('force deleting');
     while(len--){
         var sub_file = fs.join(file, paths[len]);
-        print(sub_file);
         if(fs.isDirectory(sub_file)){
-            print('removing folder');
             force_delete_folder(sub_file);
         }else{
-            print('removing file');
             fs.remove(sub_file);
         }
     }
@@ -46,11 +44,13 @@ function copy_file(from, to){
 }
 
 task("debug-build", ['clean','debug-framework-build','debug-application-build'], function(){
-    var files = fs.listPaths(fs.join('build', 'debug', 'js'));
     var js_output = "";
-    files.map(function(file){
+    FRAMEWORK_FILES.map(function(file){
         js_output += "<script type='text/javascript' src='js/"+file+"'></script>";
     });
+    APP_FILES.map(function(file){
+		js_output += "<script type='text/javascript' src='js/"+file+"'></script>";
+	});
     
     var css_output = "<link rel='stylesheet' type='text/css' href='debug-framework.css' />"
     //generate html file
@@ -95,6 +95,8 @@ task("clean", [], function(){
         force_delete_folder('build');
     }
     fs.mkdir('build');
+	fs.mkdir(fs.join('build', 'debug'));
+	fs.mkdir(fs.join('build', 'debug', 'js'));
 });
 
 
