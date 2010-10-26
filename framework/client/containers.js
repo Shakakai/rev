@@ -60,22 +60,60 @@ rev.containers.Container = rev.core.UIComponent.extend({
             if(x == null && w == null){
                 throw new Error("Must specify at least two of the following properties: left, width, right");
             }
-            if(x == null){
-                x = this.width() - w - right;
+/**
+function getScrollBarWidth () {  
+    var inner = document.createElement('p');  
+    inner.style.width = "100%";  
+    inner.style.height = "200px";  
+  
+    var outer = document.createElement('div');  
+    outer.style.position = "absolute";  
+    outer.style.top = "0px";  
+    outer.style.left = "0px";  
+    outer.style.visibility = "hidden";  
+    outer.style.width = "200px";  
+    outer.style.height = "150px";  
+    outer.style.overflow = "hidden";  
+    outer.appendChild (inner);  
+  
+    document.body.appendChild (outer);  
+    var w1 = inner.offsetWidth;  
+    outer.style.overflow = 'scroll';  
+    var w2 = inner.offsetWidth;  
+    if (w1 == w2) w2 = outer.clientWidth;  
+  
+    document.body.removeChild (outer);  
+  
+    return (w1 - w2);  
+};
+**/
+
+            console.log("CHECK FOR SCROLL", this._el);
+			var cw = this._calculatedLayout.w;
+			var iw = this._el.innerWidth();
+			var clientRect = this._el.getClientRects();
+			console.log("INNER OUTTER >>", cw, iw, clientRect);
+			if(cw > iw){
+				cw = iw;
+				console.log("USING INNER WIDTH");
+			}
+			if(x == null){
+                x = cw - w - right;
             }else if(w == null){
-                console.log("calc width:", this.width(), x, right);
-                w = this.width() - x - right;
+                console.log("calc width:", this._calculatedLayout.w, x, right);
+                w = cw - x - right;
             }
         }
         if(y == null || h == null){
             if(y == null && h == null){
                 throw new Error("Must specify at least two of the following properties: top, height, bottom");
             }
+			//sconsole.log("CHECK FOR SCROLL", this._el);
             if(y == null){
-                y = this.height() - h - bottom;
+                y = this._calculatedLayout.h - h - bottom;
             }else if(h == null){
-                console.log('calculating height', this.height(), y, bottom);
-                h = this.height() - y - bottom;
+                console.log('calculating height', this._calculatedLayout.h, y, bottom);
+                h = this._calculatedLayout.h - y - bottom;
             }
         }
         
@@ -121,13 +159,15 @@ rev.containers.Application = rev.containers.Container.extend({
         this._el = $(el);
         
         $(window).resize(rev.utils.BindingUtil.scopeFunc(this.onResize, this));
-        
+        this.updateLayoutCalculations();
+
         //create global handle (Would people really have two apps running on one page?)
         //yea, probably at some point :(
         rev.containers.Application.application = this;
     },
     onResize : function(){
-        var children = this._el.children();
+        this.updateLayoutCalculations();
+		var children = this._el.children();
         var len = children.length;
         for(var a=0; a<len; a++){
             var id = $(children[a]).attr('id');
@@ -135,11 +175,23 @@ rev.containers.Application = rev.containers.Container.extend({
             this.layoutChild(this._children[id]);
         }
     },
+	updateLayoutCalculations : function(){
+		//update calculated properties
+		var result = {
+			h : this.height(),
+			w : this.width(),
+			x : 0,
+			y : 0
+		};
+		console.log("Application layout calculations");
+		console.log(result);
+		this._calculatedLayout = result;
+	},
     width : function(){
-        return this._el.width();
+		return window.innerWidth;
     },
     height : function(){
-        return this._el.height();
+        return window.innerHeight;
     },
     _internalStyleName : 'rev-app'
 });

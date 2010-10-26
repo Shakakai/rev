@@ -76,9 +76,13 @@ rev.core.UIComponent = Base.extend({
         this.parent().layoutChild(this);
     },
     updateDisplayList : function(x, y, width, height){
-        var update = {'top' : y, 'left' : x, 'width' : width, 'height' : height};
-        this._calculatedLayout = update;
-        this._el.css(update);
+        this._calculatedLayout = {'y' : y, 'x' : x, 'w' : width, 'h' : height};
+        this._el.css({
+			width: width,
+			height: height,
+			top: y,
+			left: x
+		});
     },
     // event handling
     fire : function(evt){
