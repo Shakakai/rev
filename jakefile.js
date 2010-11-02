@@ -2,6 +2,10 @@ var fs = require("file");
 var task = require("jake").task;
 var less = require("less");
 
+//require.paths.push('./framework/codegen/view_expansion');
+
+var ve = require('./framework/codegen/view_expansion');
+
 var FRAMEWORK_FILES = ('jquery.js base.js core.js utils.js controls.js containers.js controllers.js').split(' ');
 
 var APP_FILES = ['app.js'];
@@ -42,6 +46,14 @@ function copy_file(from, to){
     var content = fs.read(from);
     fs.write(to, content);
 }
+
+task("test", [], function(){
+	print('test');
+	var json = fs.read('lib/view.js');
+	var view = JSON.decode(json);
+	var result = ve.view_expander('view', view);
+	print(result);
+});
 
 task("debug-build", ['clean','debug-framework-build','debug-application-build'], function(){
     var js_output = "";

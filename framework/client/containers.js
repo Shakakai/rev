@@ -32,7 +32,17 @@ rev.containers.Container = rev.core.UIComponent.extend({
         //this changes based on layouting system
         //this implementation is simple absolute positioning
         child.updateDisplayList(rect.x, rect.y, rect.w, rect.h);
+		
+		//this check child's bounds
+		
     },
+	hasVerticalScroll : function(){
+		console.log("HAS VERTICAL SCROLL", this._el.innerHeight(), this._el.outerHeight(), (this._el.innerHeight() < this._el.outerHeight()));
+		return (this._el.innerHeight() < this._el.outerHeight());
+	},
+	hasHorizontalScroll : function(){
+		return (this._el.offsetWidth < this._el.scrollWidth);
+	},
     getLayoutRect : function(child){
         var x, y, w, h, 
         top = child.top(), 
@@ -60,47 +70,16 @@ rev.containers.Container = rev.core.UIComponent.extend({
             if(x == null && w == null){
                 throw new Error("Must specify at least two of the following properties: left, width, right");
             }
-/**
-function getScrollBarWidth () {  
-    var inner = document.createElement('p');  
-    inner.style.width = "100%";  
-    inner.style.height = "200px";  
-  
-    var outer = document.createElement('div');  
-    outer.style.position = "absolute";  
-    outer.style.top = "0px";  
-    outer.style.left = "0px";  
-    outer.style.visibility = "hidden";  
-    outer.style.width = "200px";  
-    outer.style.height = "150px";  
-    outer.style.overflow = "hidden";  
-    outer.appendChild (inner);  
-  
-    document.body.appendChild (outer);  
-    var w1 = inner.offsetWidth;  
-    outer.style.overflow = 'scroll';  
-    var w2 = inner.offsetWidth;  
-    if (w1 == w2) w2 = outer.clientWidth;  
-  
-    document.body.removeChild (outer);  
-  
-    return (w1 - w2);  
-};
-**/
 
-            console.log("CHECK FOR SCROLL", this._el);
 			var cw = this._calculatedLayout.w;
-			var iw = this._el.innerWidth();
-			var clientRect = this._el.getClientRects();
-			console.log("INNER OUTTER >>", cw, iw, clientRect);
-			if(cw > iw){
-				cw = iw;
+			if(true || this.hasVerticalScroll()){
+				cw -= 15;
 				console.log("USING INNER WIDTH");
 			}
 			if(x == null){
                 x = cw - w - right;
             }else if(w == null){
-                console.log("calc width:", this._calculatedLayout.w, x, right);
+                console.log("calc width:", this._calculatedLayout.w, cw, x, right);
                 w = cw - x - right;
             }
         }
@@ -108,7 +87,10 @@ function getScrollBarWidth () {
             if(y == null && h == null){
                 throw new Error("Must specify at least two of the following properties: top, height, bottom");
             }
-			//sconsole.log("CHECK FOR SCROLL", this._el);
+			var ch = this._calculatedLayout.h;
+			if(true || this.hasHorizontalScroll()){
+				ch -= 15;
+			}
             if(y == null){
                 y = this._calculatedLayout.h - h - bottom;
             }else if(h == null){
