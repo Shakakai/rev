@@ -18,6 +18,10 @@ rev.controls.TextBase = rev.core.UIComponent.extend({
         this._el.text(this._text);
         console.log("Label::commit props");
     },
+	updateDisplayList : function(x, y, width, height){
+		console.log("label layout", arguments);
+		this.base(x,y,width,height);
+	},
     //properties
     labelType : function(value){
         if(arguments.length == 0){
