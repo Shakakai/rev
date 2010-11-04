@@ -135,6 +135,14 @@ rev.containers.Container = rev.core.UIComponent.extend({
             return this._gap;
         }
     },
+	invalidateProperties : function(propagate){
+		this.base();
+		if(propagate){
+			for(var childId in this._children){
+				this._children[childId].invalidateProperties(true);
+			}
+		}
+	},
     updateDisplayList : function(x, y, width, height){
         console.log("CONTAINER UPDATE", arguments);
         this.base(x, y, width, height);
@@ -189,6 +197,10 @@ rev.containers.Application = rev.containers.Container.extend({
 		this._calculatedLayout = result;
 	},
 	commitDisplayList : function(){},
+	afterAdd : function(){
+		this.base();
+		this.invalidateProperties(true);
+	},
     width : function(){
 		return window.innerWidth;
     },
@@ -214,7 +226,11 @@ rev.containers.VBox = rev.containers.Container.extend({
             }
         }
         
+		console.log("VBox Rect");
+
         var rect = this.getLayoutRect(child);
+
+		console.log(rect);
         
         //this changes based on layouting system
         //this implementation is simple absolute positioning
