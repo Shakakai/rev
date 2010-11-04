@@ -51,8 +51,9 @@ rev.core.UIComponent = Base.extend({
         t.start();
     },
     callOnce : function(name, func, args){
-        if(!this._timers[name]){
-            var t = new rev.utils.Timer(1, func, this, args);
+        if(this.isOnStage() && !this._timers[name]){
+            console.log('firing timer', name, this);
+			var t = new rev.utils.Timer(1, func, this, args);
             t.start();
             this._timers[name] = t;
         }
@@ -73,6 +74,9 @@ rev.core.UIComponent = Base.extend({
     },
     commitDisplayList : function(){
         this._timers["displayList"] = null;
+		if(this.parent() == null){
+			console.log("null parent", this);
+		}
         this.parent().layoutChild(this);
     },
     updateDisplayList : function(x, y, width, height){
@@ -178,6 +182,11 @@ rev.core.UIComponent = Base.extend({
         }
         this._parent = value;
     },
+	isOnStage : function(){
+		return (this._onStage && 
+				this.parent() != null && 
+				this.parent().isOnStage());
+	},
     //private members
     _internalStyleName : null
 });

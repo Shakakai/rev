@@ -38,7 +38,10 @@ rev.containers.Container = rev.core.UIComponent.extend({
         delete this._children[child._id];
     },
     layoutChild : function(child){
-        console.log("layoutChild", this, child);
+        if(!this.isOnStage()){
+			return;
+		}
+		console.log("layoutChild", this, child);
         var rect = this.getLayoutRect(child);
         console.log("layoutRect", rect);
         
@@ -185,12 +188,16 @@ rev.containers.Application = rev.containers.Container.extend({
 		console.log(result);
 		this._calculatedLayout = result;
 	},
+	commitDisplayList : function(){},
     width : function(){
 		return window.innerWidth;
     },
     height : function(){
         return window.innerHeight;
     },
+	isOnStage : function(){
+		return true;
+	},
     _internalStyleName : 'rev-app'
 });
 rev.containers.Application.application = null;
