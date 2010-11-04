@@ -47,14 +47,6 @@ function copy_file(from, to){
     fs.write(to, content);
 }
 
-task("test", [], function(){
-	print('test');
-	var json = fs.read('lib/view.js');
-	var view = JSON.decode(json);
-	var result = ve.view_expander('view', view);
-	print(result);
-});
-
 task("debug-build", ['clean','debug-framework-build','debug-application-build'], function(){
     var js_output = "";
     FRAMEWORK_FILES.map(function(file){
@@ -99,7 +91,14 @@ task("release-framework-build", [], function(){
 
 task("debug-application-build", [], function(){
     // copy_file(fs.join('lib', 'index.html'), fs.join('build', 'index.html'));
-    copy_file(fs.join('lib', 'app.js'), fs.join('build', 'debug', 'js', 'app.js'));
+    //copy_file(fs.join('build', 'test.js'), fs.join('build', 'debug', 'js', 'app.js'));
+
+	print('test');
+	var json = fs.read('lib/view.js');
+	var view = JSON.decode(json);
+	var result = ve.view_expander('view', view);
+	print("complete");
+	fs.write(fs.join('build', 'debug', 'js', 'app.js'), result);
 });
 
 task("clean", [], function(){
@@ -110,5 +109,4 @@ task("clean", [], function(){
 	fs.mkdir(fs.join('build', 'debug'));
 	fs.mkdir(fs.join('build', 'debug', 'js'));
 });
-
 

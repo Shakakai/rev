@@ -8,6 +8,19 @@ rev.containers.Container = rev.core.UIComponent.extend({
         this.base();
         this._children = {};
     },
+	afterAdd : function(){
+		if(this._childFactories != null){
+			for(var childName in this._childFactories){
+				if(childName != null){
+					var c = this._childFactories[childName]();
+					this[childName] = c;
+					this.addChild(c);
+				}
+			}
+			this._childFactories = null;
+		}
+		this.base();
+	},
     addChild : function(child){
         if(child.parent() != null){
             throw new Error("Cannot add a child twice!");
@@ -131,7 +144,8 @@ rev.containers.Container = rev.core.UIComponent.extend({
             this.layoutChild(this._children[id]);
         }
     },
-    _internalStyleName : 'rev-container'
+    _internalStyleName : 'rev-container',
+	_childFactories : null
 });
 
 rev.containers.Application = rev.containers.Container.extend({
@@ -146,6 +160,8 @@ rev.containers.Application = rev.containers.Container.extend({
         //create global handle (Would people really have two apps running on one page?)
         //yea, probably at some point :(
         rev.containers.Application.application = this;
+		
+		this.afterAdd();
     },
     onResize : function(){
         this.updateLayoutCalculations();
