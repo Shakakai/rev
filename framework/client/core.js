@@ -22,6 +22,7 @@ rev.core.UIComponent = Base.extend({
         this._bottom = null;
         this._right = null;
         this._calculatedLayout = null;
+		this._states = {};
         this.createChildren();
     },
     // Display List Functions
@@ -186,6 +187,19 @@ rev.core.UIComponent = Base.extend({
 		return (this._onStage && 
 				this.parent() != null && 
 				this.parent().isOnStage());
+	},
+	addStateProperty : function(state, property, value){
+		if(this._states[state] == undefined){
+			this._states[state] = {};
+		}
+		var s = this._states[state];
+		s[property] = value;
+	},
+	currentState : function(stateName){
+		var s = this._states[stateName];
+		for(var prop in s){
+			this[prop](s[prop]);
+		}
 	},
     //private members
     _internalStyleName : null

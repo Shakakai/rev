@@ -94,11 +94,12 @@ task("debug-application-build", [], function(){
     //copy_file(fs.join('build', 'test.js'), fs.join('build', 'debug', 'js', 'app.js'));
 
 	print('test');
-	var json = fs.read('lib/view.js');
+	var json = fs.read('lib/todo_list.js');
 	var view = JSON.decode(json);
 	var result = ve.view_expander('view', view);
+	var controller = fs.read('lib/app.js');
 	print("complete");
-	fs.write(fs.join('build', 'debug', 'js', 'app.js'), result);
+	fs.write(fs.join('build', 'debug', 'js', 'app.js'), result+controller);
 });
 
 task("clean", [], function(){

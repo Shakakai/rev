@@ -77,7 +77,6 @@ var view = (function(){
 
 **/
 
-
 exports.view_expander = function(filename, view_json){
 	
 	var emit_object = function(obj){
@@ -176,24 +175,31 @@ exports.view_expander = function(filename, view_json){
 	};
 	
 	var collectProperty = function(prop, val){
+		//pluck state properties first
+		if(prop.indexOf(".") > -1){
+			var parts = prop.split(".");
+			return tmpl("a.addStateProperty('#{state}', '#{name}', #{value});\n",{
+				"name" : parts[0],
+				"value" : serializeValue(val),
+				"state" : parts[1]
+			})
+		}
+		return tmpl("a.#{name}(#{value});\n", {
+			"name" : prop,
+			"value" : serializeValue(val)
+		});
+	};
+	
+	var serializeValue = function(val){
 		if(typeof val == 'string'){
-			return tmpl("a.#{name}('#{value}');\n", {
-				"name" : prop,
-				"value" : val
-			});
+			return tmpl("'#{value}'", { "value" : val });
 		}else if(typeof val === 'object'){
-			return tmpl("a.#{name}(#{value});\n", {
-				"name" : prop,
-				"value" : JSON.encode(val)
-			});
+			return JSON.encode(val);
 		}else if(typeof val === 'function'){
-			throw_error("function bindings have not been implemented yet.");
+			return val.toString();
 		}else{
 			//assume a literal right now; aka a number, null, undefined, etc
-			return tmpl("a.#{name}(#{value});\n", {
-				"name" : prop,
-				"value" : val
-			});
+			return tmpl("#{value}", { "value" : val });
 		}
 	};
 	

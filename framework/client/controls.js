@@ -43,3 +43,11 @@ rev.controls.TextBase = rev.core.UIComponent.extend({
 rev.controls.Label = rev.controls.TextBase.extend({ _labelType : "h1" });
 
 rev.controls.Button = rev.controls.TextBase.extend({ _labelType : "button" });
+
+rev.controls.TextInput = rev.controls.TextBase.extend({ 
+	_labelType : "input",  
+	createChildren : function(){
+		this.base();
+		this._el.attr("type", "text");
+	}
+});
