@@ -30,6 +30,7 @@ rev.containers.Container = rev.core.UIComponent.extend({
         this._el.append(child._el);
         child.parent(this);
         this._children[child._id] = child;
+        //console.log('child after add!');
         child.afterAdd();
     },
     removeChild : function(child){
@@ -41,9 +42,9 @@ rev.containers.Container = rev.core.UIComponent.extend({
         if(!this.isOnStage()){
 			return;
 		}
-		console.log("layoutChild", this, child);
+		//console.log("layoutChild", this, child);
         var rect = this.getLayoutRect(child);
-        console.log("layoutRect", rect);
+        //console.log("layoutRect", rect);
         
         //this changes based on layouting system
         //this implementation is simple absolute positioning
@@ -53,7 +54,7 @@ rev.containers.Container = rev.core.UIComponent.extend({
 		
     },
 	hasVerticalScroll : function(){
-		console.log("HAS VERTICAL SCROLL", this._el.innerHeight(), this._el.outerHeight(), (this._el.innerHeight() < this._el.outerHeight()));
+		//console.log("HAS VERTICAL SCROLL", this._el.innerHeight(), this._el.outerHeight(), (this._el.innerHeight() < this._el.outerHeight()));
 		return (this._el.innerHeight() < this._el.outerHeight());
 	},
 	hasHorizontalScroll : function(){
@@ -79,7 +80,7 @@ rev.containers.Container = rev.core.UIComponent.extend({
             y = top;
         }
         if(height != null){
-            console.log('height not null', height);
+            //console.log('height not null', height);
             h = height;
         }
         if(x == null || w == null){
@@ -90,12 +91,12 @@ rev.containers.Container = rev.core.UIComponent.extend({
 			var cw = this._calculatedLayout.w;
 			if(true || this.hasVerticalScroll()){
 				cw -= 15;
-				console.log("USING INNER WIDTH");
+				//console.log("USING INNER WIDTH");
 			}
 			if(x == null){
                 x = cw - w - right;
             }else if(w == null){
-                console.log("calc width:", this._calculatedLayout.w, cw, x, right);
+                //console.log("calc width:", this._calculatedLayout.w, cw, x, right);
                 w = cw - x - right;
             }
         }
@@ -110,7 +111,7 @@ rev.containers.Container = rev.core.UIComponent.extend({
             if(y == null){
                 y = this._calculatedLayout.h - h - bottom;
             }else if(h == null){
-                console.log('calculating height', this._calculatedLayout.h, y, bottom);
+                //console.log('calculating height', this._calculatedLayout.h, y, bottom);
                 h = this._calculatedLayout.h - y - bottom;
             }
         }
@@ -137,6 +138,7 @@ rev.containers.Container = rev.core.UIComponent.extend({
     },
 	invalidateProperties : function(propagate){
 		this.base();
+		console.log("PROPAGATE!");
 		if(propagate){
 			for(var childId in this._children){
 				this._children[childId].invalidateProperties(true);
@@ -144,14 +146,14 @@ rev.containers.Container = rev.core.UIComponent.extend({
 		}
 	},
     updateDisplayList : function(x, y, width, height){
-        console.log("CONTAINER UPDATE", arguments);
+        //console.log("CONTAINER UPDATE", arguments);
         this.base(x, y, width, height);
         
         var children = this._el.children();
         var len = children.length;
         for(var a=0; a<len; a++){
             var id = $(children[a]).attr('id');
-            console.log('id', id);
+            //console.log('id', id);
             this.layoutChild(this._children[id]);
         }
     },
@@ -180,7 +182,7 @@ rev.containers.Application = rev.containers.Container.extend({
         var len = children.length;
         for(var a=0; a<len; a++){
             var id = $(children[a]).attr('id');
-            console.log('id', id);
+            //console.log('id', id);
             this.layoutChild(this._children[id]);
         }
     },
@@ -192,8 +194,8 @@ rev.containers.Application = rev.containers.Container.extend({
 			x : 0,
 			y : 0
 		};
-		console.log("Application layout calculations");
-		console.log(result);
+		//console.log("Application layout calculations");
+		//console.log(result);
 		this._calculatedLayout = result;
 	},
 	commitDisplayList : function(){},
@@ -226,11 +228,11 @@ rev.containers.VBox = rev.containers.Container.extend({
             }
         }
         
-		console.log("VBox Rect");
+		//console.log("VBox Rect");
 
         var rect = this.getLayoutRect(child);
 
-		console.log(rect);
+		//console.log(rect);
         
         //this changes based on layouting system
         //this implementation is simple absolute positioning

@@ -32,7 +32,8 @@ rev.core.UIComponent = Base.extend({
     afterAdd : function(){
         this._onStage = true;
         this.invalidateDisplayList();
-        this.invalidateProperties();
+        // bool argument for property propagation with containers
+        this.invalidateProperties(true);
         this.fire("addedToStage");
     },
     beforeRemove : function(){
@@ -52,8 +53,8 @@ rev.core.UIComponent = Base.extend({
         t.start();
     },
     callOnce : function(name, func, args){
-        if(this.isOnStage() && !this._timers[name]){
-            console.log('firing timer', name, this);
+        if(this.isOnStage() && this._timers && !this._timers[name]){
+            //console.log('firing timer', name, this);
 			var t = new rev.utils.Timer(1, func, this, args);
             t.start();
             this._timers[name] = t;
@@ -77,6 +78,7 @@ rev.core.UIComponent = Base.extend({
         this._timers["displayList"] = null;
 		if(this.parent() == null){
 			console.log("null parent", this);
+			throw new Error("can not commitDisplayList with null parent");
 		}
         this.parent().layoutChild(this);
     },
@@ -96,6 +98,10 @@ rev.core.UIComponent = Base.extend({
         }
     },
     bind : function(evt, listener){
+        if(this._el == null){
+            console.log(this._el);
+            throw new Error("Element does not exist.");
+        }
         this._el.bind(evt, listener);
     },
     unbind : function(evt, listener){

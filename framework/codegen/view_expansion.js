@@ -229,5 +229,5 @@ exports.view_expander = function(filename, view_json){
 	};
 	
 	var src = emit_object(view_json);
-	return tmpl("$(document).ready(function(){ \nvar view = (#{factory})(); \n});", {"factory" : src });
+	return tmpl("window.#{viewName} = (#{factory});\n $(document).ready(function(){ \nwindow.application = new rev.containers.Application(); \n});", {"viewName" : filename, "factory" : src });
 };

@@ -96,7 +96,7 @@ task("debug-application-build", [], function(){
 	print('test');
 	var json = fs.read('lib/todo_list.js');
 	var view = JSON.decode(json);
-	var result = ve.view_expander('view', view);
+	var result = ve.view_expander('todoList', view);
 	var controller = fs.read('lib/app.js');
 	print("complete");
 	fs.write(fs.join('build', 'debug', 'js', 'app.js'), result+controller);
